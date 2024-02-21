@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+    <style>
+        body {
+          font-family: sans-serif;
+          margin: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+        }
+
+        .container {
+          background-color: #f0f0f0;
+          border-radius: 5px;
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .tb {
+          width: 200px;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 3px;
+          margin-bottom: 10px;
+        }
+
+        button {
+        margin: 10px;
+          background-color: #4CAF50;
+          color: white;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        button:hover {
+          background-color: #3e8e41;
+        }
+
+        .loading-bar-container {
+            position: absolute;
+            top: 10%;
+            width: 300px;
+            height: 20px;
+            background-color: #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px auto;
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-bar-container">
+        <div class="loading-bar"></div>
+    </div>
+    <div class="container">
+        <input type="text" class="tb" id="secretMessage" placeholder="Secret Message">
+        <input type="text" class="tb" id="delay" placeholder="Delayed Response">
+        <button id="messageButton" onclick='async("Super Secret Message!")'>Fetch Message</button>
+        <button id="delayButton" onclick='respondWithDelay(500)'>Delay Response</button>
+    </div>
+
+    <script type="text/javascript">
+
+        async function async(message) {
+            Bridge.interfaces.Android.relayMessage(message).then((result) => {
+                document.getElementById('secretMessage').value = result;
+            });
+        }
+
+        async function respondWithDelay(duration) {
+            Bridge.interfaces.Android.respondWithDelay(duration).then((result) => {
+                document.getElementById('delay').value = result;
+            });
+        }
+
+    </script>
+    <script type="text/javascript">
+        //Animate the progress bar to detect if the UI thread is ever frozen
+        let i = 0;
+        function move() {
+            var elem = document.querySelector(".loading-bar");
+            i+=1;
+            if (i >= 100) i = 0;
+            elem.style.width = i + "%";
+            requestAnimationFrame(move);
+        }
+        requestAnimationFrame(move);
+    </script>
+</body>
+</html>
